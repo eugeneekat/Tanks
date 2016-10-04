@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C7855D5F-C21D-4837-AE88-94D61353698E}</ProjectGuid>
+    <ProjectGuid>{C641C486-0AA4-412B-BFFF-835A2B673B08}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Tanks</RootNamespace>
@@ -43,6 +43,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GameException.cs" />
+    <Compile Include="GameObject.cs" />
+    <Compile Include="GameObjectStateEventArgs.cs" />
+    <Compile Include="KeyboardController.cs" />
+    <Compile Include="KeyboardControllerEventArgs.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
