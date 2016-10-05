@@ -48,9 +48,9 @@ namespace Tanks
         }
 
         //Действия на кнопки передвижение
-        void OnMove(object sender, KeyboardControllerEventArgs args)
+        public void OnMove(object sender, KeyboardControllerEventArgs args)
         {
-            switch(args.info.Key)
+            switch(args.Info.Key)
             {
                 case ConsoleKey.UpArrow:
                     if (this.PositionY > 0)
@@ -73,7 +73,7 @@ namespace Tanks
         }
         
         //Действия на выстрел
-        void OnShoot(object sender, KeyboardControllerEventArgs args)
+        public void OnShoot(object sender, KeyboardControllerEventArgs args)
         {
             this.shoot(this, this.args);
         }

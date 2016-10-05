@@ -16,13 +16,13 @@ namespace Tanks
                 //При движении срабатывает move
                 case ConsoleKey.UpArrow:
                 case ConsoleKey.DownArrow:
-                    this.eventArgs.info = info;
+                    this.eventArgs.Info = info;
                     if(this.move != null)
                         this.move(this, this.eventArgs);
                     break;
                 //При выстреле shoot
                 case ConsoleKey.Spacebar:
-                    this.eventArgs.info = info;
+                    this.eventArgs.Info = info;
                     if(this.shoot != null)
                         this.shoot(this, this.eventArgs);
                     break;
