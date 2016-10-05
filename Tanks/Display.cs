@@ -12,7 +12,7 @@ namespace Tanks
     {
         //Делегаты для асинхронного вызова
         Action<int, int> shoot = null;
-        Action<int, int, string> move = null;
+        Action<int, int, string[]> move = null;
 
         //Определяем делегатам методы
         public Display()
@@ -24,7 +24,7 @@ namespace Tanks
         //Асинхронный вызов перемещения танка
         public void OnMoveUpdate(object sender, GameObjectStateEventArgs args)
         {
-            this.move.BeginInvoke(args.NewStatePosX, args.NewStatePosY, args.Sprite, null, null);
+            this.move.Invoke(args.NewStatePosX, args.NewStatePosY, args.Sprite);
         }
 
         //Асинхронный вызов отрисовки полета снаряда
@@ -36,25 +36,31 @@ namespace Tanks
         //Метод отрисовки полёта снаряда
         protected void Shoot(int x, int y)
         {
-            int posX = x + 10;
+            bool left = x == 0 ? true : false;
+            int posX = (left) ? x + 10 : x - 1;
             int posY = y + 2;
-            Console.SetCursorPosition(posX, posY);
             while (posX < GameField.MaxWidth)
             {
-                Console.Write("*");
                 Console.SetCursorPosition(posX, posY);
+                Console.Write("*");
                 Thread.Sleep(80);
                 Console.SetCursorPosition(posX, posY);
                 Console.Write(" ");
-                posX++;
+                if (left)
+                    posX++;
+                else
+                    posX--;
             }
         }
 
         //Метод отрисовки перемещения танка
-        protected void Move(int x, int y, string sprite)
+        protected void Move(int x, int y, string [] sprite)
         {
-            Console.SetCursorPosition(x, y);
-            Console.Write(sprite);
+            for(int i = 0; i < sprite.Length; i++)
+            {
+                Console.SetCursorPosition(x, y + i);
+                Console.Write(sprite[i]);
+            }          
         }
     }
 }

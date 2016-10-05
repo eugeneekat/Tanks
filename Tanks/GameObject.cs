@@ -26,7 +26,7 @@ namespace Tanks
     abstract class GameObject
     {
         //Изображение объекта
-        protected string sprite = string.Empty;
+        protected string [] sprite = null;
 
         //Отслеживание изменение состояния объекта (агрументы передаются отрисовщику)
         protected GameObjectStateEventArgs args = new GameObjectStateEventArgs();
@@ -44,7 +44,7 @@ namespace Tanks
         public event Action<object, GameObjectStateEventArgs> move = null;
 
         //Конструктор устанавливает позиции объекта и агрументы для события
-        public Tank(int x, int y, string sprite)
+        public Tank(int x, int y, string [] sprite)
         {
             this.PositionX  = this.args.NewStatePosX    = x;
             this.PositionY  = this.args.NewStatePosY    = y;
