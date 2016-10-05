@@ -6,15 +6,11 @@ using System.Threading.Tasks;
 
 namespace Tanks
 {
-    abstract class GameObject
+    static class GameField
     {
-        //Позиция объекта
-        protected int PositionX { get; set; }
-        protected int PositionY { get; set; }
-
         //Границы поля
-        protected static int MaxWidth { get; set; }
-        protected static int MaxHeight { get; set; }
+        public static int MaxWidth { get; set; }
+        public static int MaxHeight { get; set; }
 
         //Инициализация границ поля
         public static void SetField(int width, int height)
@@ -24,11 +20,20 @@ namespace Tanks
                 MaxWidth = width;
                 MaxHeight = height;
             }
+        }           
+    }
 
-        }    
+    abstract class GameObject
+    {
+        //Изображение объекта
+        protected string sprite = string.Empty;
 
-        //Аргументы события объекта(Старое положение и новое положение)
+        //Отслеживание изменение состояния объекта (агрументы передаются отрисовщику)
         protected GameObjectStateEventArgs args = new GameObjectStateEventArgs();
+
+        //Позиция объекта
+        protected int PositionX { get; set; }
+        protected int PositionY { get; set; }
     }
 
     class Tank : GameObject
@@ -39,39 +44,38 @@ namespace Tanks
         public event Action<object, GameObjectStateEventArgs> move = null;
 
         //Конструктор устанавливает позиции объекта и агрументы для события
-        public Tank(int x, int y)
+        public Tank(int x, int y, string sprite)
         {
-            this.PositionX = x;
-            this.PositionY = y;
-            this.args.OldStatePosX = this.args.NewStatePosX = this.PositionX;
-            this.args.OldStatePosY = this.args.NewStatePosY = this.PositionY;
+            this.PositionX  = this.args.NewStatePosX    = x;
+            this.PositionY  = this.args.NewStatePosY    = y;
+            this.sprite     = this.args.Sprite          = sprite;
         }
 
-        //Действия на кнопки передвижение
+        //Обработка события передвижения у контроллера
         public void OnMove(object sender, KeyboardControllerEventArgs args)
         {
-            switch(args.Info.Key)
+            switch (args.Info.Key)
             {
+                //Проверка границ и передвижение координат
                 case ConsoleKey.UpArrow:
                     if (this.PositionY > 0)
-                       this.PositionY--;
+                        this.args.NewStatePosY--;
                     break;
                 case ConsoleKey.DownArrow:
-                    if (this.PositionY < GameObject.MaxHeight)
-                        this.PositionY++;
+                    if (this.PositionY < GameField.MaxHeight)
+                        this.args.NewStatePosY++;
                     break;
             }
-            this.args.NewStatePosX = this.PositionX;
-            this.args.NewStatePosY = this.PositionY;
-            if (this.args.NewStatePosX != this.args.OldStatePosX || this.args.NewStatePosY != this.args.OldStatePosY)
+            //Если границы допускают передвижение то меняем положение оригинала и сообщаем отрисовщику
+            if (this.args.NewStatePosY != this.PositionY)
             {
+                this.PositionX = this.args.NewStatePosX;
+                this.PositionY = this.args.NewStatePosY;
                 if (this.move != null)
-                    this.move(this, this.args);
-                this.args.OldStatePosX = this.args.NewStatePosX;
-                this.args.OldStatePosY = this.args.NewStatePosY;
-            }    
+                    this.move(this, this.args);             
+            }
         }
-        
+
         //Действия на выстрел
         public void OnShoot(object sender, KeyboardControllerEventArgs args)
         {

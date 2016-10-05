@@ -10,40 +10,51 @@ namespace Tanks
     
     class Display
     {
-        
-        string tank =
-            "        \n" +
-            "------  \n" +
-            "|   ----\n" +
-            "|   ----\n" +
-            "------  \n" +
-            "        \n";
+        //Делегаты для асинхронного вызова
+        Action<int, int> shoot = null;
+        Action<int, int, string> move = null;
 
-        public void OnMoveUpdate(object sender, GameObjectStateEventArgs args)
+        //Определяем делегатам методы
+        public Display()
         {
-            Console.SetCursorPosition(args.OldStatePosX, args.OldStatePosY);
-            Console.SetCursorPosition(args.NewStatePosX, args.NewStatePosY);
-            Console.Write(this.tank);
+            this.shoot = this.Shoot;
+            this.move = this.Move;
         }
 
+        //Асинхронный вызов перемещения танка
+        public void OnMoveUpdate(object sender, GameObjectStateEventArgs args)
+        {
+            this.move.BeginInvoke(args.NewStatePosX, args.NewStatePosY, args.Sprite, null, null);
+        }
+
+        //Асинхронный вызов отрисовки полета снаряда
         public void OnShootUpdate(object sender, GameObjectStateEventArgs args)
         {
-            Action<int, int> action = (x, y) =>
+            this.shoot.BeginInvoke(args.NewStatePosX, args.NewStatePosY, null, null);
+        }
+
+        //Метод отрисовки полёта снаряда
+        protected void Shoot(int x, int y)
+        {
+            int posX = x + 10;
+            int posY = y + 2;
+            Console.SetCursorPosition(posX, posY);
+            while (posX < GameField.MaxWidth)
             {
-                int posX = args.NewStatePosX + 10;
-                int posY = args.NewStatePosY + 2;
+                Console.Write("*");
                 Console.SetCursorPosition(posX, posY);
-                while (posX < 25)
-                {
-                    Console.Write("*");
-                    Console.SetCursorPosition(posX, posY);
-                    Thread.Sleep(80);
-                    Console.SetCursorPosition(posX, posY);
-                    Console.Write(" ");
-                    posX++;
-                }
-            };
-            action.BeginInvoke(args.NewStatePosX, args.NewStatePosY, null, null);
+                Thread.Sleep(80);
+                Console.SetCursorPosition(posX, posY);
+                Console.Write(" ");
+                posX++;
+            }
+        }
+
+        //Метод отрисовки перемещения танка
+        protected void Move(int x, int y, string sprite)
+        {
+            Console.SetCursorPosition(x, y);
+            Console.Write(sprite);
         }
     }
 }

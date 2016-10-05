@@ -9,13 +9,20 @@ namespace Tanks
     class Program
     {
         static void Main(string[] args)
-        { 
+        {
+            string tankSpr =
+           "        \n" +
+           "------  \n" +
+           "|   ----\n" +
+           "|   ----\n" +
+           "------  \n" +
+           "        \n";
 
             KeyboardController contr = new KeyboardController();
             
-            GameObject.SetField(15, 15);
+            GameField.SetField(15, 15);
 
-            Tank tank = new Tank(0, 0);
+            Tank tank = new Tank(0, 0, tankSpr);
 
             contr.move += tank.OnMove;
             contr.shoot += tank.OnShoot;

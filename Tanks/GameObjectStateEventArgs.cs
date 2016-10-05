@@ -8,9 +8,11 @@ namespace Tanks
 {
     class GameObjectStateEventArgs
     {
-        public int OldStatePosX { get; set; }
+        //Текстура
+        public string Sprite { get; set; }
+
+        //Позиция
         public int NewStatePosX { get; set; }
-        public int OldStatePosY { get; set; }
         public int NewStatePosY { get; set; }
     }
 }
