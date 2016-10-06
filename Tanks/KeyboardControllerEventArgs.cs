@@ -4,6 +4,6 @@ namespace Tanks
 {
     class KeyboardControllerEventArgs : EventArgs
     {
-        public ConsoleKeyInfo Info { get; set; }
+        public ConsoleKey Key { get; set; }
     }
 }

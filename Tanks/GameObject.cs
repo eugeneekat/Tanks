@@ -54,7 +54,7 @@ namespace Tanks
         //Обработка события передвижения у контроллера
         public void OnMove(object sender, KeyboardControllerEventArgs args)
         {
-            switch (args.Info.Key)
+            switch (args.Key)
             {
                 //Проверка границ и передвижение координат
                 case ConsoleKey.UpArrow:

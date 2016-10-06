@@ -23,23 +23,26 @@ namespace Tanks
                                     "----   |\n",
                                     "  ------\n",
                                     "        \n"};
-
-            KeyboardController contr = new KeyboardController();
-           
             GameField.SetField(50, 20);
 
-            Tank tank = new Tank(0, 0, leftTankSpr);
-            Tank tank2 = new Tank(50, 0, rightTankSpr);
-            contr.move += tank2.OnMove;
-            contr.shoot += tank2.OnShoot;
 
+            KeyboardController contr = new KeyboardController();
+            Tank tank = new Tank(0, 0, leftTankSpr);
             contr.move += tank.OnMove;
             contr.shoot += tank.OnShoot;
+
+            AIController ai = new AIController();
+            Tank tank2 = new Tank(50, 0, rightTankSpr);
+            ai.move += tank2.OnMove;
+            ai.shoot += tank2.OnShoot;
+
+
             Display disp = new Display();
             tank.move += disp.OnMoveUpdate;
             tank.shoot += disp.OnShootUpdate;
             tank2.move += disp.OnMoveUpdate;
             tank2.shoot += disp.OnShootUpdate;
+            ai.AsyncAction();
             while (true)
             {
                 contr.Action(Console.ReadKey());

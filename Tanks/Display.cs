@@ -39,7 +39,7 @@ namespace Tanks
             bool left = x == 0 ? true : false;
             int posX = (left) ? x + 10 : x - 1;
             int posY = y + 2;
-            while (posX < GameField.MaxWidth)
+            while (posX < GameField.MaxWidth && posX > 0)
             {
                 Console.SetCursorPosition(posX, posY);
                 Console.Write("*");
