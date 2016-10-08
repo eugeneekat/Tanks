@@ -14,5 +14,8 @@ namespace Tanks
         //Позиция
         public int NewStatePosX { get; set; }
         public int NewStatePosY { get; set; }
+
+        //
+        public bool IsAlive { get; set; } = true;
     }
 }

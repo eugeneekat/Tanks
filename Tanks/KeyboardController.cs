@@ -11,21 +11,21 @@ namespace Tanks
         //События движения и стрельбы
         public event Action<object, KeyboardControllerEventArgs> move = null;
         public event Action<object, KeyboardControllerEventArgs> shoot = null;
-
+        public event Action<object, KeyboardControllerEventArgs> exit = null;
         //Аргументы нажатой клавишы
         protected KeyboardControllerEventArgs eventArgs = new KeyboardControllerEventArgs();
+        protected AsyncCallback onExit = null;
         //Абстрактный метод считывание нажатия кнопки
         protected abstract void Action();
         //Асинхронный метод считывания
         public void AsyncAction()
         {
             if (this.asyncActionDeleg != null)
-                this.asyncActionDeleg.BeginInvoke(null, null);
+                this.asyncActionDeleg.BeginInvoke(this.onExit, null);
         }
         
         //Делегат для асинхронного метода
         protected delegate void AsyncActionDeleg();
-
 
         protected void OnMove()
         {
@@ -35,6 +35,12 @@ namespace Tanks
         protected void OnShoot()
         {
             this.shoot?.Invoke(this, this.eventArgs);
+        }
+
+        protected void OnExit(IAsyncResult result)
+        {
+            if (result.IsCompleted)
+                this.exit(this, this.eventArgs);
         }
     }
 
@@ -51,9 +57,10 @@ namespace Tanks
         //Метод считывания кнопки
         protected override void Action()
         {
-            while (true)
+            ConsoleKeyInfo info = new ConsoleKeyInfo();
+            while (info.Key != ConsoleKey.Escape)
             {
-                ConsoleKeyInfo info = Console.ReadKey();
+                info = Console.ReadKey();
                 switch (info.Key)
                 {
                     //При движении срабатывает move
@@ -69,8 +76,8 @@ namespace Tanks
                         break;
                 }
             }
+            this.eventArgs.Key = info.Key;
         }
-
     }
 
     //Класс упраления компьютером
@@ -86,7 +93,7 @@ namespace Tanks
         //Случайное действие компьютера
         protected override void Action()
         {
-            while (true)
+            while (!GameField.IsEndGame)
             {
                 int i = rand.Next(1, 8);
                 switch (i)

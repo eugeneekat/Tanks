@@ -20,7 +20,10 @@ namespace Tanks
                 MaxWidth = width;
                 MaxHeight = height;
             }
-        }           
+        }
+
+        //Флаг компьютеру что игра окончена
+        public static bool IsEndGame { get; set; } = false;
     }
 
     abstract class GameObject
@@ -38,11 +41,12 @@ namespace Tanks
 
     class Tank : GameObject
     {
-        public bool isAlive { get; set; }
         //Событие выстрела
         public event Action<object, GameObjectStateEventArgs> shoot = null;
         //Событие движения
         public event Action<object, GameObjectStateEventArgs> move = null;
+        //Событие завершения игры
+        public event Action<object, GameObjectStateEventArgs> exit = null;
 
         //Конструктор устанавливает позиции объекта и агрументы для события
         public Tank(int x, int y, string [] sprite)
@@ -82,6 +86,13 @@ namespace Tanks
         public void OnShoot(object sender, KeyboardControllerEventArgs args)
         {
             this.shoot(this, this.args);
+        }
+
+        //Действия на выход
+        public void OnExit (object sender, GameObjectStateEventArgs args)
+        {
+            this.args.IsAlive = false;
+            this.exit(this, this.args);
         }
     }
 
