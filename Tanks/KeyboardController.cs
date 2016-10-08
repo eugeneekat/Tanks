@@ -6,24 +6,42 @@ namespace Tanks
     //Абстрактный класс контроллер
     abstract class Controller
     {
+        //Экземляр делегата для асинхронного вызова
+        protected AsyncActionDeleg asyncActionDeleg = null;
+        //События движения и стрельбы
+        public event Action<object, KeyboardControllerEventArgs> move = null;
+        public event Action<object, KeyboardControllerEventArgs> shoot = null;
+
         //Аргументы нажатой клавишы
         protected KeyboardControllerEventArgs eventArgs = new KeyboardControllerEventArgs();
         //Абстрактный метод считывание нажатия кнопки
         protected abstract void Action();
         //Асинхронный метод считывания
-        public abstract void AsyncAction();
+        public void AsyncAction()
+        {
+            if (this.asyncActionDeleg != null)
+                this.asyncActionDeleg.BeginInvoke(null, null);
+        }
+        
         //Делегат для асинхронного метода
         protected delegate void AsyncActionDeleg();
+
+
+        protected void OnMove()
+        {
+            this.move?.Invoke(this, this.eventArgs);
+        }
+
+        protected void OnShoot()
+        {
+            this.shoot?.Invoke(this, this.eventArgs);
+        }
     }
 
     //Класс контроллера игрока
     class PlayerController : Controller
     {
-        //События движения и стрельбы
-        public event Action<object, KeyboardControllerEventArgs> move = null;
-        public event Action<object, KeyboardControllerEventArgs> shoot = null;
-        //Делагат асинхронного метода считывания
-        AsyncActionDeleg asyncActionDeleg = null;
+        
 
         public PlayerController()
         {
@@ -42,23 +60,15 @@ namespace Tanks
                     case ConsoleKey.UpArrow:
                     case ConsoleKey.DownArrow:
                         this.eventArgs.Key = info.Key;
-                        if (this.move != null)
-                            this.move(this, this.eventArgs);
+                        this.OnMove();
                         break;
                     //При выстреле shoot
                     case ConsoleKey.Spacebar:
                         this.eventArgs.Key = info.Key;
-                        if (this.shoot != null)
-                            this.shoot(this, this.eventArgs);
+                        this.OnShoot();
                         break;
                 }
             }
-        }
-
-        //Асинхронный метод считывание нажатия кнопки
-        public override void AsyncAction()
-        {
-            this.asyncActionDeleg.BeginInvoke(null,null);
         }
 
     }
@@ -66,11 +76,6 @@ namespace Tanks
     //Класс упраления компьютером
     class AIController : Controller
     {
-        //События
-        public event Action<object, KeyboardControllerEventArgs> move = null;
-        public event Action<object, KeyboardControllerEventArgs> shoot = null;
-
-        AsyncActionDeleg asyncActionDeleg = null;
         Random rand = new Random();
 
         public AIController()
@@ -90,29 +95,22 @@ namespace Tanks
                     case 2:
                     case 3:
                         this.eventArgs.Key = ConsoleKey.UpArrow;
-                        this.move(this, this.eventArgs);
+                        this.OnMove();
                         break;
                     case 4:
                     case 5:
                     case 6:
                         this.eventArgs.Key = ConsoleKey.DownArrow;
-                        this.move(this, this.eventArgs);
+                        this.OnMove();
                         break;
                     case 7:
                         this.eventArgs.Key = ConsoleKey.Spacebar;
-                        this.shoot(this, this.eventArgs);
+                        this.OnShoot();
                         break;
                 }
                 Thread.Sleep(500);
             }
-        }
-            
-        public override void AsyncAction()
-        {
-            this.asyncActionDeleg.BeginInvoke(null, null);
-        }
-
-        
+        }      
     }
 
 

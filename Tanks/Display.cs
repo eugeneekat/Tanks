@@ -7,7 +7,7 @@ using System.Threading;
 
 namespace Tanks
 {
-    
+
     class Display
     {
         //Примитив синхронизации отрисовки
@@ -64,7 +64,7 @@ namespace Tanks
         }
 
         //Метод отрисовки перемещения танка
-        protected void Move(int x, int y, string [] sprite)
+        protected void Move(int x, int y, string[] sprite)
         {
             //Синхронизация отрисовки
             lock (this.sync)
@@ -74,7 +74,7 @@ namespace Tanks
                     Console.SetCursorPosition(x, y + i);
                     Console.Write(sprite[i]);
                 }
-            }       
+            }
         }
     }
 }
