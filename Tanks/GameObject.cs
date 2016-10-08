@@ -38,6 +38,7 @@ namespace Tanks
 
     class Tank : GameObject
     {
+        public bool isAlive { get; set; }
         //Событие выстрела
         public event Action<object, GameObjectStateEventArgs> shoot = null;
         //Событие движения
@@ -49,6 +50,7 @@ namespace Tanks
             this.PositionX  = this.args.NewStatePosX    = x;
             this.PositionY  = this.args.NewStatePosY    = y;
             this.sprite     = this.args.Sprite          = sprite;
+            this.isAlive    = true;
         }
 
         //Обработка события передвижения у контроллера

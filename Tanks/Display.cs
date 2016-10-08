@@ -10,6 +10,9 @@ namespace Tanks
     
     class Display
     {
+        //Примитив синхронизации отрисовки
+        protected object sync = new object();
+
         //Делегаты для асинхронного вызова
         Action<int, int> shoot = null;
         Action<int, int, string[]> move = null;
@@ -41,11 +44,18 @@ namespace Tanks
             int posY = y + 2;
             while (posX < GameField.MaxWidth && posX > 0)
             {
-                Console.SetCursorPosition(posX, posY);
-                Console.Write("*");
+                //Примитивы синхронизации отрисовки что бы не смешивалось
+                lock (this.sync)
+                {
+                    Console.SetCursorPosition(posX, posY);
+                    Console.Write("*");
+                }
                 Thread.Sleep(80);
-                Console.SetCursorPosition(posX, posY);
-                Console.Write(" ");
+                lock (this.sync)
+                {
+                    Console.SetCursorPosition(posX, posY);
+                    Console.Write(" ");
+                }
                 if (left)
                     posX++;
                 else
@@ -56,11 +66,15 @@ namespace Tanks
         //Метод отрисовки перемещения танка
         protected void Move(int x, int y, string [] sprite)
         {
-            for(int i = 0; i < sprite.Length; i++)
+            //Синхронизация отрисовки
+            lock (this.sync)
             {
-                Console.SetCursorPosition(x, y + i);
-                Console.Write(sprite[i]);
-            }          
+                for (int i = 0; i < sprite.Length; i++)
+                {
+                    Console.SetCursorPosition(x, y + i);
+                    Console.Write(sprite[i]);
+                }
+            }       
         }
     }
 }

@@ -26,7 +26,7 @@ namespace Tanks
             GameField.SetField(50, 20);
 
 
-            KeyboardController contr = new KeyboardController();
+            PlayerController contr = new PlayerController();
             Tank tank = new Tank(0, 0, leftTankSpr);
             contr.move += tank.OnMove;
             contr.shoot += tank.OnShoot;
@@ -43,9 +43,11 @@ namespace Tanks
             tank2.move += disp.OnMoveUpdate;
             tank2.shoot += disp.OnShootUpdate;
             ai.AsyncAction();
-            while (true)
+            contr.AsyncAction();
+            
+            while(tank.isAlive != false || tank2.isAlive != false)
             {
-                contr.Action(Console.ReadKey());
+
             }
 
         }
