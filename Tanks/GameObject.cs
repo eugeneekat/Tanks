@@ -41,6 +41,7 @@ namespace Tanks
 
     class Tank : GameObject
     {
+
         //Событие выстрела
         public event Action<object, GameObjectStateEventArgs> shoot = null;
         //Событие движения
@@ -54,7 +55,6 @@ namespace Tanks
             this.PositionX  = this.args.NewStatePosX    = x;
             this.PositionY  = this.args.NewStatePosY    = y;
             this.sprite     = this.args.Sprite          = sprite;
-            this.isAlive    = true;
         }
 
         //Обработка события передвижения у контроллера
@@ -89,9 +89,13 @@ namespace Tanks
         }
 
         //Действия на выход
-        public void OnExit (object sender, GameObjectStateEventArgs args)
+        public void OnExit (object sender, KeyboardControllerEventArgs args)
         {
-            this.args.IsAlive = false;
+            //Если был нажат esc то игрок вышел
+            if(args.Key == ConsoleKey.Escape)
+                //Устаналиваем аргумент жизни в false
+                this.args.IsAlive = false;
+            //Оповещаем подписчиков на событии выход игрока
             this.exit(this, this.args);
         }
     }

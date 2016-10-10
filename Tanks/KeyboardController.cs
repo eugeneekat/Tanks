@@ -6,41 +6,56 @@ namespace Tanks
     //Абстрактный класс контроллер
     abstract class Controller
     {
-        //Экземляр делегата для асинхронного вызова
+        //Делегат для асинхронного метода
+        protected delegate void AsyncActionDeleg();
+
+        //Экземляр делегата для асинхронного вызова метода управления
         protected AsyncActionDeleg asyncActionDeleg = null;
-        //События движения и стрельбы
-        public event Action<object, KeyboardControllerEventArgs> move = null;
-        public event Action<object, KeyboardControllerEventArgs> shoot = null;
-        public event Action<object, KeyboardControllerEventArgs> exit = null;
-        //Аргументы нажатой клавишы
-        protected KeyboardControllerEventArgs eventArgs = new KeyboardControllerEventArgs();
+
+        //Экземляр делегата для вызова метода зверщения асинхронных методов ввода(когда игрок нажал esc)
         protected AsyncCallback onExit = null;
-        //Абстрактный метод считывание нажатия кнопки
+
+        /*---События---*/
+        //Движение
+        public event Action<object, KeyboardControllerEventArgs> move = null;
+        //Стрельба
+        public event Action<object, KeyboardControllerEventArgs> shoot = null;
+        //Выход
+        public event Action<object, KeyboardControllerEventArgs> exit = null;
+
+        //Аргументы нажатой клавишы(Передаются в события)
+        protected KeyboardControllerEventArgs eventArgs = new KeyboardControllerEventArgs();
+
+        //Абстрактный метод считывание нажатия кнопки(у игрока считываение нажатия, у компьютера рандом)
         protected abstract void Action();
-        //Асинхронный метод считывания
+        
+        //Асинхронный метод считывания ввода
         public void AsyncAction()
         {
             if (this.asyncActionDeleg != null)
                 this.asyncActionDeleg.BeginInvoke(this.onExit, null);
         }
         
-        //Делегат для асинхронного метода
-        protected delegate void AsyncActionDeleg();
-
+        //Метод оповещения о движении
         protected void OnMove()
         {
             this.move?.Invoke(this, this.eventArgs);
         }
-
+        
+        //Метод оповещения о выстреле
         protected void OnShoot()
         {
             this.shoot?.Invoke(this, this.eventArgs);
         }
 
+
+        //Метод завершения ввода
         protected void OnExit(IAsyncResult result)
         {
-            if (result.IsCompleted)
-                this.exit(this, this.eventArgs);
+            //Оповещаем о завершении
+            this.exit(this, this.eventArgs);
+            //Удаляем всех подписчиков
+            this.move = this.shoot = this.exit = null;           
         }
     }
 
@@ -48,17 +63,18 @@ namespace Tanks
     class PlayerController : Controller
     {
         
-
+        //Устанавливаем асинхронный делегат ввода определенным методом считывания
         public PlayerController()
         {
             this.asyncActionDeleg = this.Action;
         }
 
-        //Метод считывания кнопки
+        //Определяем метод считывания кнопки
         protected override void Action()
         {
             ConsoleKeyInfo info = new ConsoleKeyInfo();
-            while (info.Key != ConsoleKey.Escape)
+            //Пока игра не закончена или пока игрок не нажемт esc 
+            while (!GameField.IsEndGame || info.Key != ConsoleKey.Escape)
             {
                 info = Console.ReadKey();
                 switch (info.Key)
@@ -76,6 +92,7 @@ namespace Tanks
                         break;
                 }
             }
+            //Устанавливаем в аргументы события последнюю нажатую кнопку
             this.eventArgs.Key = info.Key;
         }
     }
@@ -83,16 +100,19 @@ namespace Tanks
     //Класс упраления компьютером
     class AIController : Controller
     {
+        //Для генерации дейстаия
         Random rand = new Random();
 
+        //Устанавливаем асинхронный делегат ввода определенным методом считывания
         public AIController()
         {
             this.asyncActionDeleg = this.Action;
         }
 
-        //Случайное действие компьютера
+        //Определяем метод считывания кнопки
         protected override void Action()
         {
+            //До тех пор пока игры не закончена
             while (!GameField.IsEndGame)
             {
                 int i = rand.Next(1, 8);

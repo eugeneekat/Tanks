@@ -8,14 +8,14 @@ namespace Tanks
 {
     class GameObjectStateEventArgs
     {
-        //Текстура
+        //Текстура для отрисовки
         public string [] Sprite { get; set; }
 
-        //Позиция
+        //Позиция объекта
         public int NewStatePosX { get; set; }
         public int NewStatePosY { get; set; }
 
-        //
+        //Жив ли объект
         public bool IsAlive { get; set; } = true;
     }
 }

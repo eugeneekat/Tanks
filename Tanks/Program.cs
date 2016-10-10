@@ -45,7 +45,7 @@ namespace Tanks
             ai.AsyncAction();
             contr.AsyncAction();
             
-            while(tank.isAlive != false || tank2.isAlive != false)
+            while(!GameField.IsEndGame)
             {
 
             }
