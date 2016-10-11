@@ -32,8 +32,7 @@ namespace Tanks
         //Асинхронный метод считывания ввода
         public void AsyncAction()
         {
-            if (this.asyncActionDeleg != null)
-                this.asyncActionDeleg.BeginInvoke(this.onExit, null);
+            this.asyncActionDeleg.BeginInvoke(this.OnExit, null);
         }
         
         //Метод оповещения о движении
@@ -53,7 +52,7 @@ namespace Tanks
         protected void OnExit(IAsyncResult result)
         {
             //Оповещаем о завершении
-            this.exit(this, this.eventArgs);
+            this.exit?.Invoke(this, this.eventArgs);
             //Удаляем всех подписчиков
             this.move = this.shoot = this.exit = null;           
         }
@@ -74,7 +73,7 @@ namespace Tanks
         {
             ConsoleKeyInfo info = new ConsoleKeyInfo();
             //Пока игра не закончена или пока игрок не нажемт esc 
-            while (!GameField.IsEndGame || info.Key != ConsoleKey.Escape)
+            while (!GameField.IsEndGame && info.Key != ConsoleKey.Escape)
             {
                 info = Console.ReadKey();
                 switch (info.Key)

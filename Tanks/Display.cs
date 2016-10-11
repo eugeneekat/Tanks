@@ -14,35 +14,44 @@ namespace Tanks
         protected object sync = new object();
 
         //Делегаты для асинхронного вызова
-        Action<int, int> shoot = null;
-        Action<int, int, string[]> move = null;
+        Action<object, GameObjectStateEventArgs> shoot = null;
+
+        Dictionary<object, GameObjectStateEventArgs> dic = new Dictionary<object, GameObjectStateEventArgs>();
 
         //Определяем делегатам методы
         public Display()
         {
             this.shoot = this.Shoot;
-            this.move = this.Move;
         }
 
-        //Асинхронный вызов перемещения танка
+        //Перемещения танка - синхронная отрисовка
         public void OnMoveUpdate(object sender, GameObjectStateEventArgs args)
         {
-            this.move.Invoke(args.NewStatePosX, args.NewStatePosY, args.Sprite);
+            this.dic[sender] = args;
+            //Синхронизация отрисовки
+            lock (this.sync)
+            {
+                for (int i = 0; i < args.Sprite.Length; i++)
+                {
+                    Console.SetCursorPosition(args.NewStatePosX, args.NewStatePosY + i);
+                    Console.Write(args.Sprite[i]);
+                }
+            }
         }
 
         //Асинхронный вызов отрисовки полета снаряда
         public void OnShootUpdate(object sender, GameObjectStateEventArgs args)
         {
-            this.shoot.BeginInvoke(args.NewStatePosX, args.NewStatePosY, null, null);
+            this.shoot.BeginInvoke(sender, args, null, null);
         }
 
         //Метод отрисовки полёта снаряда
-        protected void Shoot(int x, int y)
+        protected void Shoot(object sender, GameObjectStateEventArgs args)
         {
-            bool left = x == 0 ? true : false;
-            int posX = (left) ? x + 10 : x - 1;
-            int posY = y + 2;
-            while (posX < GameField.MaxWidth && posX > 0)
+            bool left = args.NewStatePosX == 0 ? true : false;
+            int posX = (left) ? args.NewStatePosX + 10 : args.NewStatePosX - 1;
+            int posY = args.NewStatePosY + 2;
+            while (posX < GameField.MaxWidth && posX > 0 && !GameField.IsEndGame)
             {
                 //Примитивы синхронизации отрисовки что бы не смешивалось
                 lock (this.sync)
@@ -61,19 +70,31 @@ namespace Tanks
                 else
                     posX--;
             }
-            //Тут можно определить попадание(проще через статический класс GameField и AsyncCallback)
+            //Определяет попадание
+            foreach (var i in this.dic)
+            {
+                if (i.Key != sender)
+                {
+                    if (i.Value.NewStatePosX == posX && i.Value.NewStatePosY == posY)
+                    {
+                        i.Value.IsAlive = false;
+                        GameField.IsEndGame = true;
+                    }
+                    break;
+                }
+            }
+           
         }
 
-        //Метод отрисовки перемещения танка
-        protected void Move(int x, int y, string[] sprite)
+        public void Exit(object sender, GameObjectStateEventArgs args)
         {
-            //Синхронизация отрисовки
-            lock (this.sync)
+            if (!args.IsAlive)
             {
-                for (int i = 0; i < sprite.Length; i++)
+                Console.Clear();
+                Console.WriteLine("LLooser:\n");
+                foreach (string s in args.Sprite)
                 {
-                    Console.SetCursorPosition(x, y + i);
-                    Console.Write(sprite[i]);
+                    Console.Write(s);
                 }
             }
         }

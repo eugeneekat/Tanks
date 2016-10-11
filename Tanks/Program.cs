@@ -30,24 +30,29 @@ namespace Tanks
             Tank tank = new Tank(0, 0, leftTankSpr);
             contr.move += tank.OnMove;
             contr.shoot += tank.OnShoot;
+            contr.exit += tank.OnExit;
 
             AIController ai = new AIController();
             Tank tank2 = new Tank(50, 0, rightTankSpr);
             ai.move += tank2.OnMove;
             ai.shoot += tank2.OnShoot;
 
-
             Display disp = new Display();
             tank.move += disp.OnMoveUpdate;
+
             tank.shoot += disp.OnShootUpdate;
+            tank.exit += disp.Exit;
+           
             tank2.move += disp.OnMoveUpdate;
+
             tank2.shoot += disp.OnShootUpdate;
+
             ai.AsyncAction();
             contr.AsyncAction();
             
-            while(!GameField.IsEndGame)
+            while(true)
             {
-
+                
             }
 
         }

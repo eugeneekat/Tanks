@@ -23,7 +23,7 @@ namespace Tanks
         }
 
         //Флаг компьютеру что игра окончена
-        public static bool IsEndGame { get; set; } = false;
+        public static bool IsEndGame { get; set; } = false;        
     }
 
     abstract class GameObject
@@ -96,7 +96,11 @@ namespace Tanks
                 //Устаналиваем аргумент жизни в false
                 this.args.IsAlive = false;
             //Оповещаем подписчиков на событии выход игрока
-            this.exit(this, this.args);
+            this.exit?.Invoke(this, this.args);
+            //Устанавливаем флаг завершения игры
+            GameField.IsEndGame = true;
+            //Удаляем всех подписчиков
+            this.exit = this.move = this.shoot = null;
         }
     }
 
