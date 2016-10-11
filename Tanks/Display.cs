@@ -75,7 +75,7 @@ namespace Tanks
             {
                 if (i.Key != sender)
                 {
-                    if (i.Value.NewStatePosX == posX && i.Value.NewStatePosY == posY)
+                    if (i.Value.NewStatePosX == posX && (i.Value.NewStatePosY < posY && posY < i.Value.NewStatePosY + i.Value.Sprite.Length))
                     {
                         i.Value.IsAlive = false;
                         GameField.IsEndGame = true;

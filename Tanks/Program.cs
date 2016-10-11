@@ -36,7 +36,7 @@ namespace Tanks
             Tank tank2 = new Tank(50, 0, rightTankSpr);
             ai.move += tank2.OnMove;
             ai.shoot += tank2.OnShoot;
-
+            ai.exit += tank2.OnExit;
             Display disp = new Display();
             tank.move += disp.OnMoveUpdate;
 
@@ -44,7 +44,7 @@ namespace Tanks
             tank.exit += disp.Exit;
            
             tank2.move += disp.OnMoveUpdate;
-
+            tank2.exit += disp.Exit;
             tank2.shoot += disp.OnShootUpdate;
 
             ai.AsyncAction();
