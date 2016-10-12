@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace Tanks
 {
@@ -23,38 +23,38 @@ namespace Tanks
                                     "----   |\n",
                                     "  ------\n",
                                     "        \n"};
-            GameField.SetField(50, 20);
+            int width = 50;
+            int height = 20;
+            GameField.SetField(width, height);
 
-
-            PlayerController contr = new PlayerController();
-            Tank tank = new Tank(0, 0, leftTankSpr);
-            contr.move += tank.OnMove;
-            contr.shoot += tank.OnShoot;
-            contr.exit += tank.OnExit;
-
-            AIController ai = new AIController();
-            Tank tank2 = new Tank(50, 0, rightTankSpr);
-            ai.move += tank2.OnMove;
-            ai.shoot += tank2.OnShoot;
-            ai.exit += tank2.OnExit;
             Display disp = new Display();
-            tank.move += disp.OnMoveUpdate;
+            PlayerController playerContoller = new PlayerController();
+            Tank playerTank = new Tank(0, 0, leftTankSpr);
+            playerContoller.move    += playerTank.OnMove;
+            playerContoller.shoot   += playerTank.OnShoot;
+            playerContoller.exit    += playerTank.OnExit;
+            playerTank.move         += disp.OnMoveUpdate;
+            playerTank.shoot        += disp.OnShootUpdate;
+            playerTank.exit         += disp.Exit;
 
-            tank.shoot += disp.OnShootUpdate;
-            tank.exit += disp.Exit;
-           
-            tank2.move += disp.OnMoveUpdate;
-            tank2.exit += disp.Exit;
-            tank2.shoot += disp.OnShootUpdate;
+            AIController aiController = new AIController();
+            Tank aiTank = new Tank(GameField.MaxWidth, 0, rightTankSpr);
+            aiController.move   += aiTank.OnMove;
+            aiController.shoot  += aiTank.OnShoot;
+            aiController.exit   += aiTank.OnExit;
+            aiTank.move         += disp.OnMoveUpdate;          
+            aiTank.shoot        += disp.OnShootUpdate;
+            aiTank.exit         += disp.Exit;
 
-            ai.AsyncAction();
-            contr.AsyncAction();
+            aiController.AsyncAction();
+            playerContoller.AsyncAction();
             
-            while(true)
+            while(!GameField.IsEndGame)
             {
                 
             }
-
+            Console.ReadKey();
+            
         }
     }
 }

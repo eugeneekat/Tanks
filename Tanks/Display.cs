@@ -91,7 +91,7 @@ namespace Tanks
             if (!args.IsAlive)
             {
                 Console.Clear();
-                Console.WriteLine("LLooser:\n");
+                Console.WriteLine("Looser:");
                 foreach (string s in args.Sprite)
                 {
                     Console.Write(s);

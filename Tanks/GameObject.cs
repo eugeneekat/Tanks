@@ -15,11 +15,8 @@ namespace Tanks
         //Инициализация границ поля
         public static void SetField(int width, int height)
         {
-            if (width > 0 && height > 0)
-            {
-                MaxWidth = width;
-                MaxHeight = height;
-            }
+            MaxWidth = width >= 20 ? width : 20;
+            MaxHeight = height >= 10 ? height : 10;
         }
 
         //Флаг компьютеру что игра окончена
